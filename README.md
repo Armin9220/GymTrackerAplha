@@ -136,7 +136,15 @@ Alle Testergebnisse werden im CI-Protokoll gespeichert.
    ```bash
    docker-compose up --build
    ```
-3. Frontend ist auf `http://localhost:5173` erreichbar, Backend auf `http://localhost:8080`.
+   ODER
+
+   zuerst mysql server starten auf standardport docker-compose up -d
+
+  danach backend mit zuerst cd backend dann mvn clean spring-boot:run
+
+  danach cd frontend und im frontend dann npm run dev
+   
+4. Frontend ist auf `http://localhost:5173` erreichbar, Backend auf `http://localhost:8080`.
 
 ---
 
