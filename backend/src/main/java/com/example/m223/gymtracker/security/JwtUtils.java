@@ -10,6 +10,8 @@ import javax.crypto.SecretKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -30,15 +32,22 @@ LoggerFactory.getLogger(JwtUtils.class);
 private String jwtSecret;
 @Value("${myapp.jwtExpirationMs}")
 private int jwtExpirationMs;
-public String generateToken(String username) {
-Map<String, Object> claims = new HashMap<>();
-return Jwts.builder() .claims(claims)
- .subject(username)
- .issuedAt(new Date())
- .expiration(new Date(System.currentTimeMillis() 
- +jwtExpirationMs))
- .signWith(getSignKey()) .compact();
+public String generateToken(UserDetailsImpl userDetails) {
+    Map<String, Object> claims = new HashMap<>();
+    claims.put("roles", userDetails.getAuthorities().stream()
+        .map(GrantedAuthority::getAuthority)
+        .toList());
+
+    return Jwts.builder()
+        .claims(claims)
+        .subject(userDetails.getUsername())
+        .issuedAt(new Date())
+        .expiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
+        .signWith(getSignKey())
+        .compact();
 }
+
+
 private Key getSignKey() {
  byte[] keyBytes = Decoders.BASE64.decode(jwtSecret);
  return Keys.hmacShaKeyFor(keyBytes);

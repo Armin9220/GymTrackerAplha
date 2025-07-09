@@ -29,9 +29,18 @@ const getJwtHeader = () => {
   };
 };
 
+const signup = (username, email, password, role = "user") =>
+  axios.post(API_URL + "signup", {
+    username,
+    email,
+    password,
+    roles: [role],
+  });
+
 export default {
   login,
   logout,
   getCurrentUser,
-  getJwtHeader
+  getJwtHeader,
+  signup
 };

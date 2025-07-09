@@ -1,38 +1,42 @@
+import React, { useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
-import Layout from './modules/Layout';
-import Home from './modules/Home';
-import About from './modules/About';
-import Login from './modules/Login';
+import Navigation from './modules/Navigation';
 import AdminDashboard from './modules/AdminDashboard';
 import UserDashboard from './modules/UserDashboard';
+import Login from './modules/Login';
 import NoPage from './modules/NoPage';
 import RequireAuth from './modules/RequireAuth';
+import AuthContext from './services/auth.context';
+import { ThemeProvider } from '@mui/material/styles';
+import Home from './modules/Home';
+import Signup from './modules/SignUp';
+
+import theme from './theme';
 
 export default function App() {
+  const [user, setUser] = useState(null);
+
   return (
-    <Routes>
-      <Route path="/" element={<Layout />}>
-        <Route index element={<Home />} />
-        <Route path="about" element={<About />} />
-        <Route path="login" element={<Login />} />
-        <Route
-          path="admin"
-          element={
+    <ThemeProvider theme={theme}>
+      <AuthContext.Provider value={{ user, setUser }}>
+        <Navigation />
+        <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/signup" element={<Signup />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/admin/*" element={
             <RequireAuth role="ROLE_ADMIN">
               <AdminDashboard />
             </RequireAuth>
-          }
-        />
-        <Route
-          path="user"
-          element={
+          } />
+          <Route path="/user/*" element={
             <RequireAuth role="ROLE_USER">
               <UserDashboard />
             </RequireAuth>
-          }
-        />
-        <Route path="*" element={<NoPage />} />
-      </Route>
-    </Routes>
+          } />
+          <Route path="*" element={<NoPage />} />
+        </Routes>
+      </AuthContext.Provider>
+    </ThemeProvider>
   );
 }

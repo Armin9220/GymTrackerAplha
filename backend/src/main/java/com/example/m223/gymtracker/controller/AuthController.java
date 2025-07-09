@@ -14,6 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import com.example.m223.gymtracker.security.UserDetailsImpl;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -56,9 +57,9 @@ public class AuthController {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(request.getUsername(),
                             request.getPassword()));
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            String jwt = jwtUtils.generateToken(request.getUsername());
-            UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+                            SecurityContextHolder.getContext().setAuthentication(authentication);
+                            UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+                            String jwt = jwtUtils.generateToken(userDetails);                          
             List<String> roles = userDetails.getAuthorities().stream()
                     .map(item -> item.getAuthority())
                     .collect(Collectors.toList());
