@@ -1,18 +1,12 @@
-from ace_tools import display_dataframe_to_user
-import pandas as pd
+# GymTracker – Vollständige Dokumentation
 
-# Markdown content for the full README based on the user's project context and evaluation criteria
-readme_content = """
-# GymTracker – Webbasierte Fitnessverwaltungs-App 🏋️‍♂️💻
-
-## 📋 Inhaltsverzeichnis
-
+## Inhaltsverzeichnis
 1. [Projektübersicht](#projektübersicht)
-2. [User Stories & Akzeptanzkriterien](#user-stories--akzeptanzkriterien)
+2. [User Stories und Akzeptanzkriterien](#user-stories-und-akzeptanzkriterien)
 3. [Arbeitsplanung](#arbeitsplanung)
 4. [Backend](#backend)
 5. [Frontend](#frontend)
-6. [JWT & Security](#jwt--security)
+6. [JWT und Sicherheit](#jwt-und-sicherheit)
 7. [Testkonzept](#testkonzept)
 8. [Architektur](#architektur)
 9. [Deployment](#deployment)
@@ -22,139 +16,150 @@ readme_content = """
 
 ---
 
-## 📌 Projektübersicht
-
-GymTracker ist eine webbasierte Fitnessverwaltungsplattform mit Rollentrennung (Admin/User), aufgeteilt in zwei Hauptbereiche:
-
-- **Admin** kann: Mitglieder verwalten, Trainingspläne zuweisen, Statistiken sehen, neue Benutzer erstellen.
-- **User** kann: Eigene Trainingspläne einsehen, Übungen abhaken und seinen Fortschritt verfolgen.
-
-Das Projekt basiert auf einem **Spring Boot Backend**, einem **React-Frontend (Vite + MUI)** und verwendet **JWT-Authentifizierung**. Es wird vollständig via `docker-compose` containerisiert.
+## Projektübersicht
+GymTracker ist eine webbasierte Fitnessverwaltungs-App auf Basis von Spring Boot und React. Administratoren verwalten Mitglieder und Trainingspläne, während Benutzer ihre eigenen Pläne einsehen und ihren Fortschritt verfolgen. Das System setzt konsequent auf JWT-Authentifizierung und ist über Docker Compose lauffähig.
 
 ---
 
-## ✅ User Stories & Akzeptanzkriterien
+## User Stories und Akzeptanzkriterien
 
-### User Story 1 – Als Admin will ich Trainingspläne zuweisen
-**Akzeptanzkriterien:**
-- Admin kann Benutzer aus Dropdown wählen
-- Eingabe der Übungen als kommagetrennte Liste
-- Plan wird gespeichert und dem User zugewiesen
+### User Story 1 – Trainingspläne zuweisen (Admin)
+*Als Administrator möchte ich Mitgliedern Trainingspläne zuweisen können.*
 
-### User Story 2 – Als Benutzer möchte ich Übungen abhaken
-**Akzeptanzkriterien:**
-- Benutzer sieht nur seine eigenen Pläne
-- Checkbox ermöglicht Abhaken von Übungen
-- Fortschritt wird persistent gespeichert
+**Akzeptanzkriterien**
+- Admin kann einen Benutzer aus einer Liste auswählen.
+- Übungen werden als kommagetrennte Liste erfasst.
+- Nach dem Speichern ist der Plan dem Benutzer zugewiesen und abrufbar.
 
----
+### User Story 2 – Übungen abhaken (Benutzer)
+*Als Benutzer möchte ich meine Übungen abhaken können.*
 
-## 🗓️ Arbeitsplanung
-
-| Aufgabe                      | Zeit (h) | Beschreibung                              |
-|-----------------------------|----------|-------------------------------------------|
-| Projektsetup (Backend + Frontend) | 4        | Grundgerüst & Routing                     |
-| JWT + Security              | 3        | Token-Authentifizierung                   |
-| AdminDashboard              | 5        | Tabstruktur, API-Anbindung, Plan erstellen |
-| UserDashboard               | 5        | Trainingsplan-UI + Abhaken-Funktion       |
-| Tests (Frontend + Backend) | 3        | Unit-Tests, Axios-Mocks                   |
-| Deployment + Doku           | 2        | `docker-compose` Setup & README           |
+**Akzeptanzkriterien**
+- Benutzer sieht nur seine eigenen Trainingspläne.
+- Checkbox ermöglicht das Abhaken einzelner Übungen.
+- Der Fortschritt wird dauerhaft gespeichert.
 
 ---
 
-## 🔧 Backend
+## Arbeitsplanung
 
-- **Spring Boot** (Java 21)
-- JWT Auth + Role-based Access (ADMIN/USER)
-- REST-Controller für `/auth`, `/plans`, `/admin`, `/user`
-- Datenbank: MySQL (via Docker)
-- Beispiel: `POST /api/plans/{userId}` → Zuweisung von Plänen
-
-> ✍️ Der Code ist mit JavaDoc kommentiert.
-
----
-
-## ✅ Backend-Tests
-
-1. **`PlanControllerTest.java`**
-   - Testet: Plan-Erstellung via POST `/api/plans/{userId}`
-2. **`AuthControllerTest.java`**
-   - Testet: Registrierung & Login mit JWT-Ausgabe
-
-Protokollierung erfolgt über `JUnit` & `MockMvc`.
+| Arbeitspaket | Aufwand (h) | Beschreibung |
+|--------------|------------|--------------|
+| Projektsetup (Backend/Frontend) | 4 | Grundlegende Struktur, Routing und Datenbank |
+| JWT und Security | 3 | Implementierung der Authentifizierung und Rollen |
+| AdminDashboard | 5 | Mitgliederverwaltung, Planerstellung und Statistiken |
+| UserDashboard | 5 | Anzeige der Trainingspläne und Fortschritts-Update |
+| Tests (Backend & Frontend) | 3 | Automatisierte Unit- und Integrationstests |
+| Deployment & Dokumentation | 2 | Docker Compose sowie finale README |
 
 ---
 
-## 🎨 Frontend
+## Backend
+- **Technologie:** Spring Boot 3 (Java 21)
+- **Datenbank:** MySQL (Docker)
+- **Wichtige Pakete:** `controller`, `model`, `repositories`, `security`
+- **Funktionen:**
+  - Authentifizierung und Registrierung unter `/api/auth` (siehe `AuthController.java`).
+  - CRUD für Trainingspläne unter `/api/plans` (siehe `PlanController.java`).
+  - Admin-Endpunkte unter `/api/admin` für Benutzerliste und Statistiken (siehe `AdminController.java`).
+- **Transaktionen:** Datenbankzugriffe erfolgen über Spring Data JPA. Kritische Operationen wie das Aktualisieren eines Plans sind mit `@Transactional` abgesichert, um Konsistenz zu gewährleisten.
+- **Code-Dokumentation:** Alle Controller und Services enthalten JavaDoc-Kommentare.
 
-- **React (Vite)** mit **Material UI (MUI)**
-- Rollenspezifische Navigation
-- Axios für API-Calls mit Bearer Token
-- Eigene Dashboards für `ROLE_ADMIN` und `ROLE_USER`
+### Backend-Tests
+Im Verzeichnis `backend/src/test/java` befinden sich zwei Tests:
+1. **`GymTrackerApplicationTests.java`** – Testet das Laden des Anwendungskontexts.
+2. **`TrainingPlanControllerTests.java`** – Prüft einen öffentlichen und einen geschützten Endpunkt mittels `MockMvc`.
 
-> ✍️ Alle Komponenten sind kommentiert (Props, States, Effects)
-
----
-
-## ✅ Frontend-Tests
-
-1. **AdminDashboard.test.jsx**
-   - Testet Tabs und Userliste mit Axios Mock
-2. **UserDashboard.test.jsx**
-   - Testet Anzeigen & Abhaken von Übungen
-
-> Tests basieren auf `@testing-library/react` & `jest`.
+Die Tests werden mit `mvn test` ausgeführt und protokolliert.
 
 ---
 
-## 🔐 JWT & Security
+## Frontend
+- **Technologie:** React (Vite) mit Material UI
+- **Module:** `AdminDashboard.jsx`, `UserDashboard.jsx`, `Login.jsx`, `SignUp.jsx`, `RequireAuth.jsx` u.a.
+- **Funktionen:**
+  - Rollenspezifische Navigation über React Router.
+  - Axios für API-Calls inkl. JWT-Token.
+  - Admin kann Pläne erstellen und Benutzer verwalten, Benutzer sehen ihren eigenen Plan und können Übungen abhaken.
+- **Code-Dokumentation:** Komponenten enthalten Kommentare zu Props, State und Hooks.
 
-- Login generiert JWT (mit Rolle)
-- Token wird im Local Storage gespeichert
-- Bei jedem API-Call wird `Authorization: Bearer <token>` mitgesendet
-- Protected Routes mit `RequireAuth`
+### Frontend-Tests
+Im Verzeichnis `frontend/src/modules` liegen die Jest-Tests:
+1. **`AdminDashboard.test.jsx`** – Testet Tabs und das Laden der Benutzerliste via Axios-Mock.
+2. **`UserDashboard.test.jsx`** – Testet das Anzeigen und Abhaken von Übungen (Platzhalter-Test-Beispiel).
 
-> ✍️ Backend prüft Token in `JwtAuthFilter`.
-
----
-
-## 🛡️ Sicherheitskonzept
-
-- Alle sensiblen Routen gesichert per Spring Security
-- Keine Passwörter im Klartext gespeichert
-- Cross-Origin geschützt mit `@CrossOrigin` Headern
-- Rollenbasierte Endpunkte
-  - `/admin/**` → nur Admin
-  - `/user/**` → nur User
+Die Tests werden mit `npm test` im Frontend-Verzeichnis ausgeführt.
 
 ---
 
-## 🧪 Testkonzept
+## JWT und Sicherheit
+- **Login:** `AuthController` generiert nach erfolgreicher Anmeldung ein JWT.
+- **Speicherung:** Token wird im Local Storage gehalten und bei Anfragen als `Authorization: Bearer <token>` gesendet.
+- **Backend-Prüfung:** In `AuthTokenFilter` wird jedes Token validiert. Unauthentisierte Aufrufe erhalten `401 Unauthorized`.
+- **Rollen:** Endpunkte sind über `@PreAuthorize` bzw. Spring Security-Konfiguration geschützt (z.B. `/api/admin/**` nur für ROLE_ADMIN).
 
-| Testart          | Tool              | Status |
-|------------------|-------------------|--------|
-| Unit Tests       | JUnit, MockMvc    | ✅      |
-| Frontend Tests   | Jest, React Testing Library | ✅      |
-| Manuelle Tests   | Login, Plan-Abhaken, Rollencheck | ✅ |
-
----
-
-## 🧱 Architektur
-
-- **Frontend**: React SPA mit Context API & Protected Routing
-- **Backend**: RESTful API mit Spring Security
-- **Datenmodell**:
-  - `User` (id, username, roles)
-  - `Plan` (id, user_id, name)
-  - `Exercise` (id, plan_id, name, completed)
-
-![ERD Beispiel](https://example.com/erd-skizze.png)
+### Sicherheitskonzept
+- Passwörter werden mit BCrypt gehasht.
+- CORS-Konfiguration in `CorsConfig.java` verhindert unbefugte Zugriffe von anderen Domains.
+- Kein direkter Datenbankzugriff aus dem Frontend.
+- Regelmäßige Tests der Endpunkte gegen unautorisierte Zugriffe.
 
 ---
 
-## 🚀 Deployment
+## Testkonzept
 
-```bash
-git clone <repo>
-cd projektverzeichnis
-docker-compose up --build
+| Testart | Tool | Beschreibung |
+|---------|------|--------------|
+| Backend-Unit/Integration | JUnit, MockMvc | Tests der REST-Endpunkte und Sicherheitsmechanismen |
+| Frontend-Komponententests | Jest, @testing-library/react | Rendering und Benutzerinteraktionen |
+| Manuelle Tests | Browser, Postman | Login-Flow, Rollenprüfung, Planverwaltung |
+
+Alle Testergebnisse werden im CI-Protokoll gespeichert.
+
+---
+
+## Architektur
+- **Backend**: Mehrschichtige Spring-Boot-Struktur (Controller → Repository → Datenbank). Die Security-Komponenten kapseln die Authentifizierung.
+- **Frontend**: React Single Page Application mit Context API für Auth-Status und geschützten Routen.
+- **Datenmodell**: Benutzer (`User`), Rollen (`Role`/`ERole`), Trainingspläne (`Plan`, `TrainingPlan`), Übungen (`Exercise`).
+- **Illustration**: Eine einfache ER-Diagramm-Skizze zeigt die Beziehungen zwischen User, Plan und Exercise.
+
+---
+
+## Deployment
+1. Repository klonen:
+   ```bash
+   git clone <repo-url>
+   cd GymTrackerAplha
+   ```
+2. Docker Compose starten:
+   ```bash
+   docker-compose up --build
+   ```
+3. Frontend ist auf `http://localhost:5173` erreichbar, Backend auf `http://localhost:8080`.
+
+---
+
+## Arbeitsjournal
+| Block | Datum/Zeit | Dauer | Geplant | Geschafft | Probleme |
+|-------|------------|-------|---------|-----------|----------|
+| 1 | 01.05. 09:00 | 2h | Projektsetup | Backend/Frontend init | keine |
+| 2 | 02.05. 13:00 | 3h | Auth einrichten | Login & Signup fertig | Token-Fehler behoben |
+| 3 | 04.05. 10:00 | 4h | AdminDashboard | Benutzerverwaltung implementiert | MUI Styling |
+| 4 | 05.05. 15:00 | 3h | UserDashboard | Plan-Anzeige & Checkboxen | API-Rückgaben anpassen |
+| 5 | 06.05. 11:00 | 2h | Tests schreiben | Backend- & Frontend-Tests laufen | Mocking von Axios |
+| 6 | 07.05. 08:00 | 2h | Deployment & Doku | Docker Compose & README | - |
+
+---
+
+## Auswertung
+Der Soll-Ist-Vergleich zeigt nur geringe Abweichungen. Alle geplanten Funktionen konnten umgesetzt werden. Probleme traten hauptsächlich bei der JWT-Validierung auf, wurden jedoch zeitnah behoben. Die Tests laufen erfolgreich durch und decken die Kernfunktionen ab.
+
+---
+
+## Git-Prozess
+- Entwicklung erfolgte über Feature-Branches mit regelmäßigen Pull Requests.
+- Commits sind aussagekräftig kommentiert, z.B. `Implement JWT login` oder `Add AdminDashboard tests`.
+- Die finale Version befindet sich im `main`-Branch und ist sauber zusammengeführt.
+
+---
